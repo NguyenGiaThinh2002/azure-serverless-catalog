@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+
+ <PropertyGroup>
+<TargetFramework>net8.0</TargetFramework>
+	 <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-Catalog.Api-6587a446-7386-40f4-a11e-b856224d8b52</UserSecretsId>
+ <DefineConstants Condition="'$(Configuration)'=='Debug'">SWAGGER</DefineConstants>
+  </PropertyGroup>
+
+
+ <ItemGroup>
+   <Content Include="host.json" />
+ </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.AzureStorage" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.51.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="8.0.0" />
+	<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.15" />
+	<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.5.1" />
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="1.3.1" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	  
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Catalog.Core\Catalog.Core.csproj" />
+    <ProjectReference Include="..\Catalog.Infrastructure\Catalog.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
