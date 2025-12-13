@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Builder;
 using Catalog.Api.HealthChecks;
 using Catalog.Api.Middleware;
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
+using Catalog.Infrastructure.HealthChecks;
+using Microsoft.Extensions.DependencyInjection;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureFunctionsWebApplication(builder =>
@@ -20,7 +22,8 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddInfrastructureServices();
 
         services.AddHealthChecks()
-                .AddCheck<BasicHealthCheck>("basic_health");
+                .AddCheck<BasicHealthCheck>("basic_health")
+                .AddCheck<CosmosDbHealthCheck>("catalog_cosmosdb"); // Error appears here
 
         // Add Swagger services
         services.AddEndpointsApiExplorer();
@@ -33,3 +36,38 @@ var host = Host.CreateDefaultBuilder(args)
 
 host.Run();
 
+//// src/backend/Catalog.Api/Program.cs
+//using Microsoft.Azure.Functions.Worker;
+//using Microsoft.Extensions.Hosting;
+//using Catalog.Core;
+//using Catalog.Infrastructure;
+//using Catalog.Api.HealthChecks;
+//using Microsoft.Extensions.Diagnostics.HealthChecks;
+//using Catalog.Api.Middleware;
+//using Microsoft.Azure.Functions.Worker.Extensions.OpenApi;
+
+//var host = Host.CreateDefaultBuilder(args)
+//    .ConfigureFunctionsWebApplication(worker =>
+//    {
+//        // Swagger UI only in development (cleanest .NET 8 way)
+//        worker.UseMiddleware<SwaggerUIMiddleware>();
+//    })
+//    .ConfigureServices(services =>
+//    {
+//        // Core + Infrastructure registration
+//        services.AddApplicationServices();
+//        services.AddInfrastructureServices();
+
+//        services.AddHealthChecks()
+//                .AddCheck<BasicHealthCheck>("basic_health")
+//                .AddAzureCosmosDB(                       // built-in health check from Microsoft.Azure.Cosmos
+//                    //cosmosClientProvider: sp => sp.GetRequiredService<Microsoft.Azure.Cosmos.CosmosClient>(),
+//                    name: "cosmosdb",
+//                    tags: new[] { "db", "cosmos" });
+
+//        // OpenAPI / Swagger (official .NET 8 isolated package)
+//        services.AddOpenApi();   // comes from Microsoft.Azure.Functions.Worker.Extensions.OpenApi
+//    })
+//    .Build();
+ 
+//host.Run();

@@ -1,10 +1,12 @@
-﻿using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.DependencyInjection;
-namespace Catalog.Infrastructure;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Catalog.Core.Repositories;
 using Catalog.Infrastructure.Repositories;
-//using Catalog.Core.Repositories;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using HealthChecks.CosmosDb;
+using Microsoft.Extensions.DependencyInjection;
 
+using Catalog.Infrastructure.HealthChecks;
+namespace Catalog.Infrastructure;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
@@ -22,7 +24,11 @@ public static class ServiceCollectionExtensions
                 }
             });
         });
-        services.AddScoped(typeof(IBaseRepository<>)
+        services.AddScoped(typeof(IBaseRepository<>), typeof(CosmosRepository<>));
+
+        //Health check for Cosmos DB
+        services.AddHealthChecks()
+                .AddCheck<CosmosDbHealthCheck>("Infrastructure-cosmosdb");
 
         // Future: Cosmos DB, Repositories, External APIs
         return services;
