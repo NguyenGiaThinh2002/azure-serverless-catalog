@@ -7,23 +7,27 @@ using Catalog.Api.HealthChecks;
 using Catalog.Api.Middleware;
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
 using Catalog.Infrastructure.HealthChecks;
+using Catalog.Api.Middleware;
 using Microsoft.Extensions.DependencyInjection;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureFunctionsWebApplication(builder =>
     {
+        // Add JWT authentication middleware
+        builder.UseMiddleware<JwtAuthMiddleware>();
+        
         builder.UseWhen<SwaggerUIMiddleware>(context =>
             context.GetHttpContext()?.Request.Path.StartsWithSegments("/swagger") == true);
     })
     .ConfigureOpenApi()
-    .ConfigureServices(services =>
+    .ConfigureServices((context, services) =>
     {
         services.AddApplicationServices();
-        services.AddInfrastructureServices();
+        services.AddInfrastructureServices(context.Configuration);
 
         services.AddHealthChecks()
                 .AddCheck<BasicHealthCheck>("basic_health")
-                .AddCheck<CosmosDbHealthCheck>("catalog_cosmosdb"); // Error appears here
+                .AddCheck<SupabaseHealthCheck>("catalog_supabase");
 
         // Add Swagger services
         services.AddEndpointsApiExplorer();
